@@ -1,0 +1,11 @@
+node_modules/
+.next/
+out/
+.env*.local
+.env
+drizzle/meta
+*.log
+.playwright-mcp/
+.mimosa/
+.DS_Store
+Thumbs.db
