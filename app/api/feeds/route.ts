@@ -1,4 +1,4 @@
-import { asc, count, eq, isNull } from "drizzle-orm";
+import { asc, count, eq, isNull, or } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { db } from "@/db";
 import { articles, feeds } from "@/db/schema";
@@ -51,6 +51,22 @@ export async function POST(req: Request) {
     return NextResponse.json(
       { error: String((e as Error).message || e).slice(0, 200) },
       { status: 422 }
+    );
+  }
+
+  // www / 非 www 视为同一订阅源：入库前先按两种主机形式查重
+  const altHref = feedUrl.hostname.startsWith("www.")
+    ? feedUrl.href.replace("//www.", "//")
+    : feedUrl.href.replace("//", "//www.");
+  const dup = await db
+    .select()
+    .from(feeds)
+    .where(or(eq(feeds.url, feedUrl.toString()), eq(feeds.url, altHref)))
+    .limit(1);
+  if (dup.length) {
+    return NextResponse.json(
+      { error: "该订阅源已存在（www 与非 www 视为同一来源）", duplicate: true },
+      { status: 409 }
     );
   }
 
