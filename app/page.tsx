@@ -137,6 +137,45 @@ export default function Reader() {
             />
             <button className="btn primary" disabled={busy}>{busy ? "…" : "订阅"}</button>
           </form>
+          <div className="opml-row">
+            <button
+              className="btn mini"
+              onClick={() => document.getElementById("opmlPick")?.click()}
+              disabled={busy}
+            >
+              📥 导入 OPML
+            </button>
+            <a className="btn mini" href="/api/feeds/opml" download="feeds.opml">
+              📤 导出 OPML
+            </a>
+            <input
+              id="opmlPick"
+              type="file"
+              accept=".opml,.xml"
+              hidden
+              onChange={async (e) => {
+                const file = e.target.files?.[0];
+                e.target.value = "";
+                if (!file) return;
+                setBusy(true);
+                setMsg(null);
+                try {
+                  const text = await file.text();
+                  const data = await apiPost<{ added: number; skipped: number; failed: number; total: number }>(
+                    "/api/feeds/opml", { opml: text });
+                  setMsg({
+                    text: `✓ OPML 导入完成：新增 ${data.added} 个订阅${data.skipped ? `，跳过已有 ${data.skipped} 个` : ""}${data.failed ? `，失败 ${data.failed} 个` : ""}。点「立即刷新」拉取文章`,
+                    ok: data.added > 0,
+                  });
+                  await loadFeeds();
+                } catch (err) {
+                  setMsg({ text: "✗ 导入失败：" + (err as Error).message, ok: false });
+                } finally {
+                  setBusy(false);
+                }
+              }}
+            />
+          </div>
           <p className={"msg" + (msg ? (msg.ok ? " ok" : " err") : "")} role="status" aria-live="polite">
             {msg?.text || ""}
           </p>
