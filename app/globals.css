@@ -50,6 +50,14 @@ input:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
 .btn.danger-ghost { color: var(--danger); border-color: transparent; background: transparent; }
 .btn:disabled { opacity: 0.55; cursor: wait; }
 
+/* 手机端:顶栏收窄,按钮不折行,长 URL 可断行 */
+@media (max-width: 640px) {
+  .header-inner { flex-wrap: wrap; gap: 8px; padding: 10px 12px; }
+  .header-actions { margin-left: 0; }
+  .header-actions .btn { white-space: nowrap; }
+  .brand { font-size: 0.98rem; }
+}
+
 .msg { min-height: 1.5em; font-size: 0.85rem; }
 .msg.err { color: var(--danger); }
 .msg.ok { color: var(--ok); }
@@ -106,11 +114,11 @@ input:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
 }
 .article-card.unread { border-left: 3px solid var(--accent-2); }
 .article-card:hover { border-color: rgb(139 123 255 / 0.5); }
-.article-card .a-body { flex: 1; min-width: 0; }
+.article-card .a-body { flex: 1; min-width: 0; overflow-wrap: anywhere; }
 .article-card .a-title { font-weight: 700; text-decoration: none; color: var(--fg); font-size: 1rem; display: block; }
 .article-card .a-title:hover { color: var(--accent-2); }
 .article-card .a-meta { color: var(--fg-muted); font-size: 0.8rem; margin: 3px 0 6px; }
-.article-card .a-summary { color: var(--fg-muted); font-size: 0.88rem; margin: 0; }
+.article-card .a-summary { color: var(--fg-muted); font-size: 0.88rem; margin: 0; overflow-wrap: anywhere; }
 .article-card .a-read-btn {
   border: 1px solid var(--border); background: transparent; color: var(--fg-muted);
   border-radius: 8px; padding: 4px 9px; font-size: 0.78rem; white-space: nowrap;
