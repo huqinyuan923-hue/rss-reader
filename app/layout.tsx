@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import { EntranceOverlay } from "@/components/entrance-overlay";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -15,7 +16,16 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="zh-CN">
-      <body>{children}</body>
+      {/* 进站动画会话标记：水合前执行（每会话一次） */}
+      <script
+        dangerouslySetInnerHTML={{
+          __html: `try{if(sessionStorage.getItem('boot-seen')){document.documentElement.dataset.boot='done'}else{sessionStorage.setItem('boot-seen','1')}}catch(e){}`,
+        }}
+      />
+      <body>
+        <EntranceOverlay />
+        {children}
+      </body>
     </html>
   );
 }
